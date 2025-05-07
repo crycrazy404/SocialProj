@@ -1,41 +1,56 @@
-package com.social.social.user.service.impl
+package com.social.social.auth.service.impl
 
-import com.social.social.user.dto.UserInputDto
-import com.social.social.user.dto.UserOutputDto
-import com.social.social.user.entity.UserEntity
-import com.social.social.user.repository.UserRepository
-import com.social.social.user.service.IUserService
-import org.springframework.security.core.userdetails.UsernameNotFoundException
+import com.social.social.auth.dto.UserRegistrationRequest
+import com.social.social.auth.dto.UserInfoResponse
+import com.social.social.auth.dto.UserUpdateRequest
+import com.social.social.auth.repository.UserRepository
+import com.social.social.auth.service.IUserService
+import com.social.social.exeption.ConflictException
+import com.social.social.exeption.ResourceNotFoundException
+import org.apache.coyote.BadRequestException
 import org.springframework.stereotype.Service
 
 
 @Service
 class UserServiceImpl(
     private val userRepository: UserRepository
-): IUserService {
-    override fun create(user: UserInputDto): UserOutputDto {
-       return userRepository.create(user)
+) : IUserService {
+
+    override fun create(user: UserRegistrationRequest): UserInfoResponse {
+        return try {
+            when (val existsBy = userRepository.existsByUsernameOrEmail(user.username, user.email)) {
+                is String -> throw ConflictException(existsBy)
+                else -> userRepository.create(user)
+            }
+        } catch (ex: BadRequestException) {
+            throw BadRequestException("Invalid fields: ${ex.message}")
+        }
     }
 
-    override fun findByUsername(username: String): UserOutputDto? {
+    override fun findByUsername(username: String): UserInfoResponse {
         return userRepository.findByUsername(username)
-            ?: throw UsernameNotFoundException("User with name $username not found")
+            ?: throw ResourceNotFoundException("Username $username not found")
     }
 
-    override fun findAll(): List<UserOutputDto> {
+    override fun findAll(): List<UserInfoResponse> {
         return userRepository.findAll()
     }
 
-    override fun findById(id: Long): UserOutputDto? {
+    override fun findById(id: Long): UserInfoResponse {
         return userRepository.findById(id)
-            ?: throw UsernameNotFoundException("User with id $id not found")
+            ?: throw ResourceNotFoundException("User with id $id not found")
     }
 
-    override fun update(id: Long, user: UserInputDto): UserOutputDto {
+    override fun update(id: Long, user: UserUpdateRequest): UserInfoResponse {
         return userRepository.update(id, user)
+            ?: throw ResourceNotFoundException("User with id $id not found")
     }
 
     override fun delete(id: Long): Int {
-        return userRepository.delete(id)
+        return when(userRepository.findById(id)){
+            null -> throw ResourceNotFoundException("User with id $id not found")
+            else -> userRepository.delete(id)
+        }
     }
+
 }

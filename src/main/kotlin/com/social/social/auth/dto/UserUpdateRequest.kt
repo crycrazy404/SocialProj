@@ -1,6 +1,6 @@
 package com.social.social.auth.dto
 
-data class UserUpdateResponse(
+data class UserUpdateRequest(
     val username: String?,
     val firstName: String?,
     val surname: String?,

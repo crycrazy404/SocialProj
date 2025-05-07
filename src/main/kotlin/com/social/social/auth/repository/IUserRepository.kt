@@ -1,16 +1,18 @@
-package com.social.social.user.repository
+package com.social.social.auth.repository
 
-import com.social.social.user.dto.UserInputDto
-import com.social.social.user.dto.UserOutputDto
-import com.social.social.user.entity.UserEntity
+import com.social.social.auth.dto.UserRegistrationRequest
+import com.social.social.auth.dto.UserInfoResponse
+import com.social.social.auth.dto.UserUpdateRequest
 
 interface IUserRepository {
 
-    fun create(user: UserInputDto): UserOutputDto
-    fun findByUsername(username: String): UserOutputDto?
-    fun findAll(): List<UserOutputDto>
-    fun findById(id: Long): UserOutputDto?
-    fun update(id: Long, user: UserInputDto): UserOutputDto
-    fun delete(id: Long): Int
+    fun create(user: UserRegistrationRequest): UserInfoResponse
+    fun findByUsername(username: String): UserInfoResponse?
+    fun findAll(): List<UserInfoResponse>
+    fun findById(id: Long): UserInfoResponse?
+    fun update(id: Long, user: UserUpdateRequest): UserInfoResponse?
+    fun delete(id: Long): Int?
+    fun existsByUsernameOrEmail(username: String, email: String): String?
+
 
 }

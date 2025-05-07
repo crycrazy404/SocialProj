@@ -1,4 +1,4 @@
 databaseChangeLog:
   - include:
-      file: changes/v1__initial_schema.yaml
+      file: changes/v1__initial_schema.sql
       relativeToChangelogFile: true

@@ -1,6 +1,8 @@
-package com.social.social.user.dto
+package com.social.social.auth.dto
 
-data class UserOutputDto(
+data class UserInfoResponse(
     val id: Long,
     val username: String,
+    val firstName: String,
+    val surname: String,
 )

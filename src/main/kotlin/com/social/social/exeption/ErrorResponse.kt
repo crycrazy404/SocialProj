@@ -1,6 +1,4 @@
-package com.social.social.auth.dto
-
-import org.springframework.http.HttpStatus
+package com.social.social.exeption
 
 data class ErrorResponse(
     var status: Int,
