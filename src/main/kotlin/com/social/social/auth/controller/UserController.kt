@@ -3,15 +3,14 @@ package com.social.social.auth.controller
 import com.social.social.auth.dto.UserRegistrationRequest
 import com.social.social.auth.dto.UserInfoResponse
 import com.social.social.auth.dto.UserUpdateRequest
-import com.social.social.auth.service.impl.UserServiceImpl
+import com.social.social.auth.service.user.impl.UserServiceImpl
 import io.swagger.v3.oas.annotations.Operation
-import jakarta.validation.Valid
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @Validated
-@RequestMapping(value = ["/api_v1/users"], produces = ["application/json"])
+@RequestMapping(value = ["/api/v1/users"], produces = ["application/json"])
 class UserController(
     val userService: UserServiceImpl,
 ) {

@@ -3,25 +3,42 @@ package com.social.social.auth.repository
 import com.social.social.auth.dto.UserRegistrationRequest
 import com.social.social.auth.dto.UserInfoResponse
 import com.social.social.auth.dto.UserUpdateRequest
-import com.social.social.auth.entity.UserEntity
-import com.social.social.auth.entity.table.UsersTable
+import com.social.social.auth.entity.role.RoleEntity
+import com.social.social.auth.entity.role.Roles
+import com.social.social.auth.entity.role.table.RoleTable
+import com.social.social.auth.entity.user.UserEntity
+import com.social.social.auth.entity.user.table.UsersTable
+import com.social.social.auth.entity.userRole.UserRoleTable
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.deleteWhere
+import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.or
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Repository
 
 @Repository
-class UserRepository: IUserRepository {
+class UserRepository(
+    private val passwordEncoder: PasswordEncoder
+) : IUserRepository {
     override fun create(user: UserRegistrationRequest): UserInfoResponse {
-        return transaction{
-            UserEntity.new {
+        return transaction {
+            val newUser = UserEntity.new {
                 username = user.username
                 email = user.email
                 firstName = user.firstName
                 surname = user.surname
-                password = user.password
-            }.toUserOutputDto()
+                password = passwordEncoder.encode(user.password)
+            }
+
+            val userRole = RoleEntity.find { RoleTable.name eq Roles.USER }.firstOrNull()
+                ?: error("Role 'USER' not found")
+
+            UserRoleTable.insert {
+                it[userId] = newUser.id
+                it[roleId] = userRole.id
+            }
+            newUser.toUserOutputDto()
         }
     }
 

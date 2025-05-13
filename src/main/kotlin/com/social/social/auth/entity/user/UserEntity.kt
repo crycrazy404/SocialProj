@@ -1,7 +1,9 @@
-package com.social.social.auth.entity
+package com.social.social.auth.entity.user
 
 import com.social.social.auth.dto.UserInfoResponse
-import com.social.social.auth.entity.table.UsersTable
+import com.social.social.auth.entity.role.RoleEntity
+import com.social.social.auth.entity.user.table.UsersTable
+import com.social.social.auth.entity.userRole.UserRoleTable
 import org.jetbrains.exposed.dao.LongEntity
 import org.jetbrains.exposed.dao.LongEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -17,6 +19,8 @@ class UserEntity(id: EntityID<Long>): LongEntity(id) {
     var password by UsersTable.password
     var createdAt by UsersTable.createdAt
     var isDeleted by UsersTable.isDeleted
+
+    val roles by RoleEntity via UserRoleTable
 
     fun toUserOutputDto() = UserInfoResponse(
         id.value,

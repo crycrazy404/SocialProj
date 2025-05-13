@@ -1,10 +1,10 @@
-package com.social.social.auth.service.impl
+package com.social.social.auth.service.user.impl
 
 import com.social.social.auth.dto.UserRegistrationRequest
 import com.social.social.auth.dto.UserInfoResponse
 import com.social.social.auth.dto.UserUpdateRequest
 import com.social.social.auth.repository.UserRepository
-import com.social.social.auth.service.IUserService
+import com.social.social.auth.service.user.IUserService
 import com.social.social.exeption.ConflictException
 import com.social.social.exeption.ResourceNotFoundException
 import org.apache.coyote.BadRequestException
@@ -18,7 +18,11 @@ class UserServiceImpl(
 
     override fun create(user: UserRegistrationRequest): UserInfoResponse {
         return try {
-            when (val existsBy = userRepository.existsByUsernameOrEmail(user.username, user.email)) {
+            when (val existsBy =
+                userRepository.existsByUsernameOrEmail(
+                    user.username,
+                    user.email
+                )) {
                 is String -> throw ConflictException(existsBy)
                 else -> userRepository.create(user)
             }

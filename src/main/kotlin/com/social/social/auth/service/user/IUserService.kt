@@ -1,4 +1,4 @@
-package com.social.social.auth.service
+package com.social.social.auth.service.user
 
 import com.social.social.auth.dto.UserRegistrationRequest
 import com.social.social.auth.dto.UserInfoResponse
